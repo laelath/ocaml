@@ -487,7 +487,7 @@ and function_param i ppf x =
       pattern (i+1) ppf pat;
       expression (i+1) ppf expr
 
-and type_parameter i ppf (x, _variance) = core_type i ppf x
+and type_parameter i ppf (x, _variance, _contractivity) = core_type i ppf x
 
 and type_declaration i ppf x =
   line i ppf "type_declaration %a %a\n" fmt_ident x.typ_id fmt_location

@@ -3176,8 +3176,9 @@ type_parameters:
   | LPAREN ps = separated_nonempty_llist(COMMA, type_parameter) RPAREN
       { ps }
 ;
+(* TODO: contractivity annotation parsed here *)
 type_parameter:
-    type_variance type_variable        { $2, $1 }
+    type_variance type_variable        { $2, $1, NoContractivity }
 ;
 type_variable:
   mktyp(

@@ -419,7 +419,7 @@ and value_description i ppf x =
   core_type (i+1) ppf x.pval_type;
   list (i+1) string ppf x.pval_prim
 
-and type_parameter i ppf (x, _variance) = core_type i ppf x
+and type_parameter i ppf (x, _variance, _contractivity) = core_type i ppf x
 
 and type_declaration i ppf x =
   line i ppf "type_declaration %a %a\n" fmt_string_loc x.ptype_name

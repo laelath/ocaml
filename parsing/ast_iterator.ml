@@ -77,7 +77,7 @@ type iterator = {
     argument the iterator to be applied to children in the syntax
     tree. *)
 
-let iter_fst f (x, _) = f x
+let iter_fst f (x, _, _) = f x
 let iter_snd f (_, y) = f y
 let iter_tuple f1 f2 (x, y) = f1 x; f2 y
 let iter_tuple3 f1 f2 f3 (x, y, z) = f1 x; f2 y; f3 z

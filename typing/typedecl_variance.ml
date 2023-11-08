@@ -407,7 +407,7 @@ let transl_variance (v, i) =
   (co, cn, match i with Injective -> true | NoInjectivity -> false)
 
 let variance_of_params ptype_params =
-  List.map transl_variance (List.map snd ptype_params)
+  List.map transl_variance (List.map (fun (_, v, _) -> v) ptype_params)
 
 let variance_of_sdecl sdecl =
   variance_of_params sdecl.Parsetree.ptype_params

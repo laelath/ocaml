@@ -206,9 +206,9 @@ let set_private_row env loc p decl =
 (* Translate one type declaration *)
 
 let make_params env params =
-  let make_param (sty, v) =
+  let make_param (sty, v, c) =
     try
-      (transl_type_param env sty, v)
+      (transl_type_param env sty, v, c)
     with Already_bound ->
       raise(Error(sty.ptyp_loc, Repeated_parameter))
   in
@@ -321,7 +321,8 @@ let transl_declaration env sdecl (id, uid) =
   Ctype.with_local_level begin fun () ->
   TyVarEnv.reset();
   let tparams = make_params env sdecl.ptype_params in
-  let params = List.map (fun (cty, _) -> cty.ctyp_type) tparams in
+  (* TODO: contractivity? *)
+  let params = List.map (fun (cty, _, _) -> cty.ctyp_type) tparams in
   let cstrs = List.map
     (fun (sty, sty', loc) ->
       transl_simple_type env ~closed:false sty,
@@ -549,7 +550,8 @@ let check_constraints_labels env visited l pl =
 let check_constraints env sdecl (_, decl) =
   let visited = ref TypeSet.empty in
   List.iter2
-    (fun (sty, _) ty -> check_constraints_rec env sty.ptyp_loc visited ty)
+    (* TODO: contractivity? *)
+    (fun (sty, _, _) ty -> check_constraints_rec env sty.ptyp_loc visited ty)
     sdecl.ptype_params decl.type_params;
   begin match decl.type_kind with
   | Type_abstract _ -> ()
@@ -1365,7 +1367,8 @@ let transl_type_extension extend env loc styext =
     Ctype.with_local_level begin fun () ->
       TyVarEnv.reset();
       let ttype_params = make_params env styext.ptyext_params in
-      let type_params = List.map (fun (cty, _) -> cty.ctyp_type) ttype_params in
+      (* TODO: contractivity? *)
+      let type_params = List.map (fun (cty, _, _) -> cty.ctyp_type) ttype_params in
       List.iter2 (Ctype.unify_var env)
         (Ctype.instance_list type_decl.type_params)
         type_params;
@@ -1655,7 +1658,8 @@ let transl_with_constraint id ?fixed_row_path ~sig_env ~sig_decl ~outer_env
   let env = outer_env in
   let loc = sdecl.ptype_loc in
   let tparams = make_params env sdecl.ptype_params in
-  let params = List.map (fun (cty, _) -> cty.ctyp_type) tparams in
+  (* TODO: contractivity? *)
+  let params = List.map (fun (cty, _, _) -> cty.ctyp_type) tparams in
   let arity = List.length params in
   let constraints =
     List.map (fun (ty, ty', loc) ->
@@ -1684,7 +1688,8 @@ let transl_with_constraint id ?fixed_row_path ~sig_env ~sig_decl ~outer_env
   let sig_decl = Ctype.instance_declaration sig_decl in
   let arity_ok = arity = sig_decl.type_arity in
   if arity_ok then
-    List.iter2 (fun (cty, _) tparam ->
+    (* TODO: contractivity? *)
+    List.iter2 (fun (cty, _, _) tparam ->
       try Ctype.unify_var env cty.ctyp_type tparam
       with Ctype.Unify err ->
         raise(Error(cty.ctyp_loc, Inconsistent_constraint (env, err)))

@@ -209,7 +209,7 @@ let module_binding sub mb =
     (map_loc sub mb.mb_name)
     (sub.module_expr sub mb.mb_expr)
 
-let type_parameter sub (ct, v) = (sub.typ sub ct, v)
+let type_parameter sub (ct, v, c) = (sub.typ sub ct, v, c)
 
 let type_declaration sub decl =
   let loc = sub.location sub decl.typ_loc in

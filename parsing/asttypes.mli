@@ -65,3 +65,7 @@ type variance =
 type injectivity =
   | Injective
   | NoInjectivity
+
+type contractivity =
+  | Contractive
+  | NoContractivity
