@@ -206,9 +206,9 @@ let set_private_row env loc p decl =
 (* Translate one type declaration *)
 
 let make_params env params =
-  let make_param (sty, v, c) =
+  let make_param (sty, v) =
     try
-      (transl_type_param env sty, v, c)
+      (transl_type_param env sty, v)
     with Already_bound ->
       raise(Error(sty.ptyp_loc, Repeated_parameter))
   in
@@ -322,7 +322,7 @@ let transl_declaration env sdecl (id, uid) =
   TyVarEnv.reset();
   let tparams = make_params env sdecl.ptype_params in
   (* TODO: contractivity? *)
-  let params = List.map (fun (cty, _, _) -> cty.ctyp_type) tparams in
+  let params = List.map (fun (cty, _) -> cty.ctyp_type) tparams in
   let cstrs = List.map
     (fun (sty, sty', loc) ->
       transl_simple_type env ~closed:false sty,
@@ -551,7 +551,7 @@ let check_constraints env sdecl (_, decl) =
   let visited = ref TypeSet.empty in
   List.iter2
     (* TODO: contractivity? *)
-    (fun (sty, _, _) ty -> check_constraints_rec env sty.ptyp_loc visited ty)
+    (fun (sty, _) ty -> check_constraints_rec env sty.ptyp_loc visited ty)
     sdecl.ptype_params decl.type_params;
   begin match decl.type_kind with
   | Type_abstract _ -> ()
@@ -1343,7 +1343,7 @@ let transl_type_extension extend env loc styext =
   let type_variance =
     List.map (fun v ->
                 let (co, cn) = Variance.get_upper v in
-                  (not cn, not co, false))
+                  (not cn, not co, false, false))
              type_decl.type_variance
   in
   let err =
@@ -1351,7 +1351,7 @@ let transl_type_extension extend env loc styext =
       Some Includecore.Arity
     else
       if List.for_all2
-           (fun (c1, n1, _) (c2, n2, _) -> (not c2 || c1) && (not n2 || n1))
+           (fun (c1, n1, _, _) (c2, n2, _, _) -> (not c2 || c1) && (not n2 || n1))
            type_variance
            (Typedecl_variance.variance_of_params styext.ptyext_params)
       then None else Some Includecore.Variance
@@ -1368,7 +1368,7 @@ let transl_type_extension extend env loc styext =
       TyVarEnv.reset();
       let ttype_params = make_params env styext.ptyext_params in
       (* TODO: contractivity? *)
-      let type_params = List.map (fun (cty, _, _) -> cty.ctyp_type) ttype_params in
+      let type_params = List.map (fun (cty, _) -> cty.ctyp_type) ttype_params in
       List.iter2 (Ctype.unify_var env)
         (Ctype.instance_list type_decl.type_params)
         type_params;
@@ -1659,7 +1659,7 @@ let transl_with_constraint id ?fixed_row_path ~sig_env ~sig_decl ~outer_env
   let loc = sdecl.ptype_loc in
   let tparams = make_params env sdecl.ptype_params in
   (* TODO: contractivity? *)
-  let params = List.map (fun (cty, _, _) -> cty.ctyp_type) tparams in
+  let params = List.map (fun (cty, _) -> cty.ctyp_type) tparams in
   let arity = List.length params in
   let constraints =
     List.map (fun (ty, ty', loc) ->
@@ -1689,7 +1689,7 @@ let transl_with_constraint id ?fixed_row_path ~sig_env ~sig_decl ~outer_env
   let arity_ok = arity = sig_decl.type_arity in
   if arity_ok then
     (* TODO: contractivity? *)
-    List.iter2 (fun (cty, _, _) tparam ->
+    List.iter2 (fun (cty, _) tparam ->
       try Ctype.unify_var env cty.ctyp_type tparam
       with Ctype.Unify err ->
         raise(Error(cty.ctyp_loc, Inconsistent_constraint (env, err)))
@@ -2073,7 +2073,8 @@ let report_error ppf = function
         (Style.as_inline_code Printtyp.longident) lid
         "is private"
   | Variance (Typedecl_variance.Bad_variance (n, v1, v2)) ->
-      let variance (p,n,i) =
+      (* TODO: contractivity *)
+      let variance (p,n,i,_c) =
         let inj = if i then "injective " else "" in
         match p, n with
           true,  true  -> inj ^ "invariant"

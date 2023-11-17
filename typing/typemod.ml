@@ -433,7 +433,7 @@ let type_decl_is_alias sdecl = (* assuming no explicit constraint *)
      begin
        match
          (* TODO: contractivity? *)
-         List.iter2 (fun x (y, _, _) ->
+         List.iter2 (fun x (y, _) ->
              match x, y with
                {ptyp_desc=Ptyp_var sx}, {ptyp_desc=Ptyp_var sy}
                   when sx = sy -> ()
@@ -506,7 +506,7 @@ let merge_constraint initial_env loc sg lid constr =
             type_variance =
               List.map
                 (* TODO: contractivity? *)
-                (fun (_, (v, i), _) ->
+                (fun (_, (v, i, _ct)) ->
                    let (c, n) =
                      match v with
                      | Covariant -> true, false

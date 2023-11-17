@@ -20,7 +20,7 @@ open Types
 module TypeSet = Btype.TypeSet
 module TypeMap = Btype.TypeMap
 
-type surface_variance = bool * bool * bool
+type surface_variance = bool * bool * bool * bool
 
 type variance_variable_context =
   | Type_declaration of Ident.t * type_declaration
@@ -116,7 +116,7 @@ let compute_variance_type env ~check (required, loc) decl tyl =
   let check_injectivity = Btype.type_kind_is_abstract decl in
   let required =
     List.map
-      (fun (c,n,i) ->
+      (fun (c,n,i,_ct) ->
         let i = if check_injectivity then i else false in
         if c || n then (c,n,i) else (true,true,i))
       required
@@ -161,6 +161,7 @@ let compute_variance_type env ~check (required, loc) decl tyl =
   | None -> ()
   | Some context ->
     (* Check variance of parameters *)
+    (* TODO: check contractivity *)
     let pos = ref 0 in
     List.iter2
       (fun ty (c, n, i) ->
@@ -170,8 +171,8 @@ let compute_variance_type env ~check (required, loc) decl tyl =
         if Btype.is_Tvar ty && (co && not c || cn && not n) || not ij && i
         then raise (Error(loc, Bad_variance
                                 (Variance_not_satisfied !pos,
-                                                        (co,cn,ij),
-                                                        (c,n,i)))))
+                                                        (co,cn,ij,false),
+                                                        (c,n,i,false)))))
       params required;
     (* Check propagation from constrained parameters *)
     let args = Btype.newgenty (Ttuple params) in
@@ -219,8 +220,8 @@ let compute_variance_type env ~check (required, loc) decl tyl =
             raise
               (Error (loc
                      , Bad_variance ( variance_error
-                                    , (c1,n1,false)
-                                    , (c2,n2,false))))
+                                    , (c1,n1,false,false)
+                                    , (c2,n2,false,false))))
         | None ->
             Btype.iter_type_expr check ty
       end
@@ -272,7 +273,7 @@ let compute_variance_gadt env ~check (required, loc as rloc) decl
           let fvl = List.map (Ctype.free_variables ?env:None) tyl in
           let _ =
             List.fold_left2
-              (fun (fv1,fv2) ty (c,n,_) ->
+              (fun (fv1,fv2) ty (c,n,_,_) ->
                 match fv2 with [] -> assert false
                 | fv :: fv2 ->
                     (* fv1 @ fv2 = free_variables of other parameters *)
@@ -311,7 +312,7 @@ let compute_variance_decl env ~check decl (required, _ as rloc) =
   let abstract = Btype.type_kind_is_abstract decl in
   if (abstract || decl.type_kind = Type_open) && decl.type_manifest = None then
     List.map
-      (fun (c, n, i) -> make (not n) (not c) (not abstract || i))
+      (fun (c, n, i, _ct) -> make (not n) (not c) (not abstract || i))
       required
   else begin
     let mn =
@@ -397,17 +398,19 @@ let property : (prop, req) Typedecl_properties.property =
     check;
   }
 
-let transl_variance (v, i) =
+let transl_variance (v, i, c) =
   let co, cn =
     match v with
     | Covariant -> (true, false)
     | Contravariant -> (false, true)
     | NoVariance -> (false, false)
   in
-  (co, cn, match i with Injective -> true | NoInjectivity -> false)
+  (co, cn,
+   (match i with Injective -> true | NoInjectivity -> false),
+   (match c with Contractive -> true | NoContractivity -> false))
 
 let variance_of_params ptype_params =
-  List.map transl_variance (List.map (fun (_, v, _) -> v) ptype_params)
+  List.map transl_variance (List.map (fun (_, v) -> v) ptype_params)
 
 let variance_of_sdecl sdecl =
   variance_of_params sdecl.Parsetree.ptype_params

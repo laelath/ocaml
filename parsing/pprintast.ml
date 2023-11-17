@@ -132,7 +132,7 @@ let type_injectivity = function
 
 let type_contractivity = function
   | NoContractivity -> ""
-  | Contractive -> "^"
+  | Contractive -> "#"
 
 type construct =
   [ `cons of expression list
@@ -1524,7 +1524,7 @@ and structure_item ctxt f x =
       item_extension ctxt f e;
       item_attributes ctxt f a
 
-and type_param ctxt f (ct, (a,b), c) =
+and type_param ctxt f (ct, (a,b,c)) =
   pp f "%s%s%s%a" (type_variance a) (type_injectivity b) (type_contractivity c) (core_type ctxt) ct
 
 and type_params ctxt f = function

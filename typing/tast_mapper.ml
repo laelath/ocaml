@@ -103,7 +103,7 @@ let class_infos sub f x =
   {x with
    ci_loc = sub.location sub x.ci_loc;
    ci_id_name = map_loc sub x.ci_id_name;
-   ci_params = List.map (tuple3 (sub.typ sub) id id) x.ci_params;
+   ci_params = List.map (tuple2 (sub.typ sub) id) x.ci_params;
    ci_expr = f x.ci_expr;
    ci_attributes = sub.attributes sub x.ci_attributes;
   }
@@ -217,7 +217,7 @@ let type_declaration sub x =
   in
   let typ_kind = sub.type_kind sub x.typ_kind in
   let typ_manifest = Option.map (sub.typ sub) x.typ_manifest in
-  let typ_params = List.map (tuple3 (sub.typ sub) id id) x.typ_params in
+  let typ_params = List.map (tuple2 (sub.typ sub) id) x.typ_params in
   let typ_attributes = sub.attributes sub x.typ_attributes in
   {x with typ_loc; typ_name; typ_cstrs; typ_kind; typ_manifest; typ_params;
           typ_attributes}
@@ -228,7 +228,7 @@ let type_declarations sub (rec_flag, list) =
 let type_extension sub x =
   let tyext_loc = sub.location sub x.tyext_loc in
   let tyext_txt = map_loc sub x.tyext_txt in
-  let tyext_params = List.map (tuple3 (sub.typ sub) id id) x.tyext_params in
+  let tyext_params = List.map (tuple2 (sub.typ sub) id) x.tyext_params in
   let tyext_constructors =
     List.map (sub.extension_constructor sub) x.tyext_constructors
   in

@@ -1531,16 +1531,16 @@ let class_infos define_class kind
       TyVarEnv.reset ();
       (* Introduce class parameters *)
       let ci_params =
-        let make_param (sty, v, c) =
+        let make_param (sty, v) =
           try
-            (transl_type_param env sty, v, c)
+            (transl_type_param env sty, v)
           with Already_bound ->
             raise(Error(sty.ptyp_loc, env, Repeated_parameter))
         in
         List.map make_param cl.pci_params
       in
       (* TODO: contractivity? *)
-      let params = List.map (fun (cty, _, _) -> cty.ctyp_type) ci_params in
+      let params = List.map (fun (cty, _) -> cty.ctyp_type) ci_params in
 
       (* Allow self coercions (only for class declarations) *)
       let coercion_locs = ref [] in

@@ -207,7 +207,7 @@ module Val:
 module Type:
   sig
     val mk: ?loc:loc -> ?attrs:attrs -> ?docs:docs -> ?text:text ->
-      ?params:(core_type * (variance * injectivity) * contractivity) list ->
+      ?params:(core_type * (variance * injectivity * contractivity)) list ->
       ?cstrs:(core_type * core_type * loc) list ->
       ?kind:type_kind -> ?priv:private_flag -> ?manifest:core_type -> str ->
       type_declaration
@@ -224,7 +224,7 @@ module Type:
 module Te:
   sig
     val mk: ?loc:loc -> ?attrs:attrs -> ?docs:docs ->
-      ?params:(core_type * (variance * injectivity) * contractivity) list ->
+      ?params:(core_type * (variance * injectivity * contractivity)) list ->
       ?priv:private_flag -> lid -> extension_constructor list -> type_extension
 
     val mk_exception: ?loc:loc -> ?attrs:attrs -> ?docs:docs ->
@@ -463,7 +463,7 @@ module Ci:
   sig
     val mk: ?loc:loc -> ?attrs:attrs -> ?docs:docs -> ?text:text ->
       ?virt:virtual_flag ->
-      ?params:(core_type * (variance * injectivity) * contractivity) list ->
+      ?params:(core_type * (variance * injectivity * contractivity)) list ->
       str -> 'a -> 'a class_infos
   end
 

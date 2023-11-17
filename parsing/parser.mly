@@ -3176,9 +3176,8 @@ type_parameters:
   | LPAREN ps = separated_nonempty_llist(COMMA, type_parameter) RPAREN
       { ps }
 ;
-(* TODO: contractivity annotation parsed here *)
 type_parameter:
-    type_variance type_variable        { $2, $1, NoContractivity }
+    type_variance type_variable        { $2, $1 }
 ;
 type_variable:
   mktyp(
@@ -3190,19 +3189,19 @@ type_variable:
 ;
 
 type_variance:
-    /* empty */                             { NoVariance, NoInjectivity }
-  | PLUS                                    { Covariant, NoInjectivity }
-  | MINUS                                   { Contravariant, NoInjectivity }
-  | BANG                                    { NoVariance, Injective }
-  | PLUS BANG | BANG PLUS                   { Covariant, Injective }
-  | MINUS BANG | BANG MINUS                 { Contravariant, Injective }
+    /* empty */                             { NoVariance, NoInjectivity, NoContractivity }
+  | PLUS                                    { Covariant, NoInjectivity, NoContractivity }
+  | MINUS                                   { Contravariant, NoInjectivity, NoContractivity }
+  | BANG                                    { NoVariance, Injective, NoContractivity }
+  | PLUS BANG | BANG PLUS                   { Covariant, Injective, NoContractivity }
+  | MINUS BANG | BANG MINUS                 { Contravariant, Injective, NoContractivity }
   | INFIXOP2
-      { if $1 = "+!" then Covariant, Injective else
-        if $1 = "-!" then Contravariant, Injective else
+      { if $1 = "+!" then Covariant, Injective, NoContractivity else
+        if $1 = "-!" then Contravariant, Injective, NoContractivity else
         expecting $loc($1) "type_variance" }
   | PREFIXOP
-      { if $1 = "!+" then Covariant, Injective else
-        if $1 = "!-" then Contravariant, Injective else
+      { if $1 = "!+" then Covariant, Injective, NoContractivity else
+        if $1 = "!-" then Contravariant, Injective, NoContractivity else
         expecting $loc($1) "type_variance" }
 ;
 

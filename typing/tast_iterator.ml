@@ -88,7 +88,7 @@ let class_infos sub f x =
   sub.location sub x.ci_loc;
   sub.attributes sub x.ci_attributes;
   iter_loc sub x.ci_id_name;
-  List.iter (fun (ct, _, _) -> sub.typ sub ct) x.ci_params;
+  List.iter (fun (ct, _) -> sub.typ sub ct) x.ci_params;
   f x.ci_expr
 
 let module_type_declaration sub x =
@@ -184,7 +184,7 @@ let type_declaration sub x =
     x.typ_cstrs;
   sub.type_kind sub x.typ_kind;
   Option.iter (sub.typ sub) x.typ_manifest;
-  List.iter (fun (c, _, _) -> sub.typ sub c) x.typ_params
+  List.iter (fun (c, _) -> sub.typ sub c) x.typ_params
 
 let type_declarations sub (_, list) = List.iter (sub.type_declaration sub) list
 
@@ -192,7 +192,7 @@ let type_extension sub x =
   sub.location sub x.tyext_loc;
   sub.attributes sub x.tyext_attributes;
   iter_loc sub x.tyext_txt;
-  List.iter (fun (c, _, _) -> sub.typ sub c) x.tyext_params;
+  List.iter (fun (c, _) -> sub.typ sub c) x.tyext_params;
   List.iter (sub.extension_constructor sub) x.tyext_constructors
 
 let type_exception sub {tyexn_loc; tyexn_constructor; tyexn_attributes; _} =
