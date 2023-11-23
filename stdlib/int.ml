@@ -44,6 +44,20 @@ let test_bit i j = logand i (1 lsl j) <> 0
 external to_float : int -> float = "%floatofint"
 external of_float : float -> int = "%intoffloat"
 
+let log2 x =
+  if x <= 0
+  then invalid_arg "log2: argument <= 0";
+  let rec lp acc x =
+    match x with
+    | 0 -> assert false
+    | 1 -> acc
+    | 2 | 3 -> 1 + acc
+    | 4 | 5 | 6 | 7 -> 2 + acc
+    | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 -> 3 + acc
+    | _ -> lp (4 + acc) (x lsr 4)
+    in
+  lp 0 x
+
 (*
 external int_of_string : string -> int = "caml_int_of_string"
 let of_string s = try Some (int_of_string s) with Failure _ -> None

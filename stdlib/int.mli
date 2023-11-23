@@ -122,6 +122,11 @@ val test_bit : int -> int -> bool
 (** [test_bit i j] returns true if the [j]th bit of [i] is 1. The result
     is unspecified if [j < 0] or [j > ]{!Sys.int_size}.*)
 
+val log2 : int -> int
+(** [log2 i] returns the truncated log base 2 of i.
+
+    @raise Invalid_argument if [i <= 0]. *)
+
 (** {1:convert Converting} *)
 
 external to_float : int -> float = "%floatofint"
