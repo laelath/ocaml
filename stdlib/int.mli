@@ -118,6 +118,10 @@ val max : int -> int -> int
     @since 4.13
  *)
 
+val test_bit : int -> int -> bool
+(** [test_bit i j] returns true if the [j]th bit of [i] is 1. The result
+    is unspecified if [j < 0] or [j > ]{!Sys.int_size}.*)
+
 (** {1:convert Converting} *)
 
 external to_float : int -> float = "%floatofint"

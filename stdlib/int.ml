@@ -40,6 +40,7 @@ let equal : int -> int -> bool = ( = )
 let compare : int -> int -> int = Stdlib.compare
 let min x y : t = if x <= y then x else y
 let max x y : t = if x >= y then x else y
+let test_bit i j = logand i (1 lsl j) <> 0
 external to_float : int -> float = "%floatofint"
 external of_float : float -> int = "%intoffloat"
 
