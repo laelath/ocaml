@@ -129,6 +129,69 @@ CAMLprim value caml_bswap16(value v)
 
 /* Bit manipulation */
 
+/* VERY naive impls */
+intnat int32_clz_naive(uint32_t i) {
+  intnat count = 0;
+  while (i > 1) {
+    count += 1;
+    i = i >> 1;
+  }
+  return (8 * sizeof(uintnat) - 1) ^ count;
+}
+
+intnat int64_clz_naive(uint64_t i) {
+  intnat count = 0;
+  while (i > 1) {
+    count += 1;
+    i = i >> 1;
+  }
+  return (8 * sizeof(uintnat) - 1) ^ count;
+}
+
+intnat int32_ctz_naive(uint32_t i) {
+  intnat count = 0;
+  while (!(i & 1)) {
+    count += 1;
+    i = i >> 1;
+  }
+  return count;
+}
+
+intnat int64_ctz_naive(uint64_t i) {
+  intnat count = 0;
+  while (!(i & 1)) {
+    count += 1;
+    i = i >> 1;
+  }
+  return count;
+}
+
+intnat int32_clrsb_naive(int32_t i) {
+  return int32_clz_naive(((2 * i) ^ (i >> 31)) | 1);
+}
+
+intnat int64_clrsb_naive(int64_t i) {
+  return int64_clz_naive(((2 * i) ^ (i >> 63)) | 1);
+}
+
+intnat int32_popcount_naive(uint32_t i) {
+  intnat count = 0;
+  while (i > 0) {
+    count += i & 1;
+    i = i >> 1;
+  }
+  return count;
+}
+
+intnat int64_popcount_naive(uint64_t i) {
+  intnat count = 0;
+  while (i > 0) {
+    count += i & 1;
+    i = i >> 1;
+  }
+  return count;
+}
+
 #if defined(__GNUC__)
 
 #if ARCH_INT32_TYPE == int
@@ -212,27 +275,25 @@ intnat Int64_ctz(int64_t i) {
 }
 
 intnat Int32_clrsb(int32_t i) {
-  return Int32_clz((2 * i) ^ (i >> 31) | 1);
+  return Int32_clz(((2 * i) ^ (i >> 31)) | 1);
 }
 
 intnat Int64_clrsb(int64_t i) {
-  return Int64_clz((2 * i) ^ (i >> 63) | 1);
+  return Int64_clz(((2 * i) ^ (i >> 63)) | 1);
 }
 
-intnat Int32_popcount(int32_t i) {
-  return __popcnt(i);
-}
-
-intnat Int64_popcount(int64_t i) {
-  #ifdef ARCH_SIXTYFOUR
-  return __popcnt64(i);
-  #else /* ARCH_THIRTYTWO */
-  return __popcnt(i) + __popcnt(i >> 32);
-  #endif
-}
+#define Int32_popcount(i) int32_popcount_naive(i)
+#define Int64_popcount(i) int64_popcount_naive(i)
 
 #else /* __GNUC__ and _MSC_VER not defined */
-/* TODO: default naive implementations */
+#define Int32_clz(i)      int32_clz_naive(i)
+#define Int64_clz(i)      int64_clz_naive(i)
+#define Int32_ctz(i)      int32_ctz_naive(i)
+#define Int64_ctz(i)      int64_ctz_naive(i)
+#define Int32_clrsb(i)    int32_clrsb_naive(i)
+#define Int64_clrsb(i)    int64_clrsb_naive(i)
+#define Int32_popcount(i) int32_popcount_naive(i)
+#define Int64_popcount(i) int64_popcount_naive(i)
 #endif
 
 #ifdef ARCH_SIXTYFOUR
