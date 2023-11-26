@@ -67,6 +67,50 @@ let test_hash () =
   in
   f 0; f 123; f (-456); f 0x3FFFFFFF; f (-0x40000000)
 
+let test_clz () =
+  assert (Int.count_leading_zeros 0 = Sys.int_size);
+  assert (Int.count_leading_zeros (-1) = 0);
+  assert (Int.count_leading_zeros Int.min_int = 0);
+  assert (Int.count_leading_zeros Int.max_int = 1);
+  assert (Int.count_leading_zeros (Int.max_int / 2) = 2);
+  assert (Int.count_leading_zeros (Int.min_int / 2) = 0);
+  assert (Int.count_leading_zeros 1 = Sys.int_size - 1);
+  assert (Int.count_leading_zeros 2 = Sys.int_size - 2);
+  assert (Int.count_leading_zeros 3 = Sys.int_size - 2)
+
+let test_ctz () =
+  assert (Int.count_trailing_zeros 0 = Sys.int_size);
+  assert (Int.count_trailing_zeros (-1) = 0);
+  assert (Int.count_trailing_zeros Int.min_int = Sys.int_size - 1);
+  assert (Int.count_trailing_zeros Int.max_int = 0);
+  assert (Int.count_trailing_zeros (Int.max_int / 2) = 0);
+  assert (Int.count_trailing_zeros (Int.min_int / 2) = Sys.int_size - 2);
+  assert (Int.count_trailing_zeros 1 = 0);
+  assert (Int.count_trailing_zeros 2 = 1);
+  assert (Int.count_trailing_zeros 3 = 0)
+
+let test_clrsb () =
+  assert (Int.count_leading_redundant_sign_bits 0 = Sys.int_size - 1);
+  assert (Int.count_leading_redundant_sign_bits (-1) = Sys.int_size - 1);
+  assert (Int.count_leading_redundant_sign_bits Int.min_int = 0);
+  assert (Int.count_leading_redundant_sign_bits Int.max_int = 0);
+  assert (Int.count_leading_redundant_sign_bits (Int.max_int / 2) = 1);
+  assert (Int.count_leading_redundant_sign_bits (Int.min_int / 2) = 1);
+  assert (Int.count_leading_redundant_sign_bits 1 = Sys.int_size - 2);
+  assert (Int.count_leading_redundant_sign_bits 2 = Sys.int_size - 3);
+  assert (Int.count_leading_redundant_sign_bits 3 = Sys.int_size - 3)
+
+let test_popcount () =
+  assert (Int.count_set_bits 0 = 0);
+  assert (Int.count_set_bits (-1) = Sys.int_size);
+  assert (Int.count_set_bits Int.min_int = 1);
+  assert (Int.count_set_bits Int.max_int = Sys.int_size - 1);
+  assert (Int.count_set_bits (Int.max_int / 2) = Sys.int_size - 2);
+  assert (Int.count_set_bits (Int.min_int / 2) = 2);
+  assert (Int.count_set_bits 1 = 1);
+  assert (Int.count_set_bits 2 = 1);
+  assert (Int.count_set_bits 3 = 2)
+
 let tests () =
   test_consts ();
   test_arith ();
@@ -77,6 +121,10 @@ let tests () =
   test_string_conv ();
   test_min_max ();
   test_hash ();
+  test_clz ();
+  test_ctz ();
+  test_clrsb ();
+  test_popcount ();
   ()
 
 let () =

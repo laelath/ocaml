@@ -100,6 +100,15 @@ external shift_right_logical : int -> int -> int = "%lsrint"
     of the sign of [x]. The result is unspecified if [n < 0] or
     [n > ]{!Sys.int_size}. *)
 
+external count_leading_zeros : int -> (int [@untagged])
+  = "caml_int_clz" "caml_int_clz_untagged" [@@noalloc]
+external count_trailing_zeros : int -> (int [@untagged])
+  = "caml_int_ctz" "caml_int_ctz_untagged" [@@noalloc]
+external count_leading_redundant_sign_bits : int -> (int [@untagged])
+  = "caml_int_clrsb" "caml_int_clrsb_untagged" [@@noalloc]
+external count_set_bits : int -> (int [@untagged])
+  = "caml_int_popcount" "caml_int_popcount_untagged" [@@noalloc]
+
 (** {1:preds Predicates and comparisons} *)
 
 val equal : int -> int -> bool

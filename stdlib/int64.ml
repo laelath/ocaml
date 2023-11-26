@@ -27,6 +27,15 @@ external logxor : int64 -> int64 -> int64 = "%int64_xor"
 external shift_left : int64 -> int -> int64 = "%int64_lsl"
 external shift_right : int64 -> int -> int64 = "%int64_asr"
 external shift_right_logical : int64 -> int -> int64 = "%int64_lsr"
+external count_leading_zeros : (int64 [@unboxed]) -> (int [@untagged])
+  = "caml_int64_clz" "caml_int64_clz_unboxed" [@@noalloc]
+external count_trailing_zeros : (int64 [@unboxed]) -> (int [@untagged])
+  = "caml_int64_ctz" "caml_int64_ctz_unboxed" [@@noalloc]
+external count_leading_redundant_sign_bits
+  : (int64 [@unboxed]) -> (int [@untagged])
+  = "caml_int64_clrsb" "caml_int64_clrsb_unboxed" [@@noalloc]
+external count_set_bits : (int64 [@unboxed]) -> (int [@untagged])
+  = "caml_int64_popcount" "caml_int64_popcount_unboxed" [@@noalloc]
 external of_int : int -> int64 = "%int64_of_int"
 external to_int : int64 -> int = "%int64_to_int"
 external of_float : float -> int64

@@ -124,6 +124,16 @@ external shift_right_logical : int32 -> int -> int32 = "%int32_lsr"
    regardless of the sign of [x].
    The result is unspecified if [y < 0] or [y >= 32]. *)
 
+external count_leading_zeros : (int32 [@unboxed]) -> (int [@untagged])
+  = "caml_int32_clz" "caml_int32_clz_unboxed" [@@noalloc]
+external count_trailing_zeros : (int32 [@unboxed]) -> (int [@untagged])
+  = "caml_int32_ctz" "caml_int32_ctz_unboxed" [@@noalloc]
+external count_leading_redundant_sign_bits
+  : (int32 [@unboxed]) -> (int [@untagged])
+  = "caml_int32_clrsb" "caml_int32_clrsb_unboxed" [@@noalloc]
+external count_set_bits : (int32 [@unboxed]) -> (int [@untagged])
+  = "caml_int32_popcount" "caml_int32_popcount_unboxed" [@@noalloc]
+
 external of_int : int -> int32 = "%int32_of_int"
 (** Convert the given integer (type [int]) to a 32-bit integer
     (type [int32]). On 64-bit platforms, the argument is taken

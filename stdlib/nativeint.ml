@@ -27,6 +27,15 @@ external logxor: nativeint -> nativeint -> nativeint = "%nativeint_xor"
 external shift_left: nativeint -> int -> nativeint = "%nativeint_lsl"
 external shift_right: nativeint -> int -> nativeint = "%nativeint_asr"
 external shift_right_logical: nativeint -> int -> nativeint = "%nativeint_lsr"
+external count_leading_zeros : (nativeint [@unboxed]) -> (int [@untagged])
+  = "caml_nativeint_clz" "caml_nativeint_clz_unboxed" [@@noalloc]
+external count_trailing_zeros : (nativeint [@unboxed]) -> (int [@untagged])
+  = "caml_nativeint_ctz" "caml_nativeint_ctz_unboxed" [@@noalloc]
+external count_leading_redundant_sign_bits
+  : (nativeint [@unboxed]) -> (int [@untagged])
+  = "caml_nativeint_clrsb" "caml_nativeint_clrsb_unboxed" [@@noalloc]
+external count_set_bits : (nativeint [@unboxed]) -> (int [@untagged])
+  = "caml_nativeint_popcount" "caml_nativeint_popcount_unboxed" [@@noalloc]
 external of_int: int -> nativeint = "%nativeint_of_int"
 external to_int: nativeint -> int = "%nativeint_to_int"
 external of_float : float -> nativeint

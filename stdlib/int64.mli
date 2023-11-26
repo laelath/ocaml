@@ -123,6 +123,16 @@ external shift_right_logical : int64 -> int -> int64 = "%int64_lsr"
    regardless of the sign of [x].
    The result is unspecified if [y < 0] or [y >= 64]. *)
 
+external count_leading_zeros : (int64 [@unboxed]) -> (int [@untagged])
+  = "caml_int64_clz" "caml_int64_clz_unboxed" [@@noalloc]
+external count_trailing_zeros : (int64 [@unboxed]) -> (int [@untagged])
+  = "caml_int64_ctz" "caml_int64_ctz_unboxed" [@@noalloc]
+external count_leading_redundant_sign_bits
+  : (int64 [@unboxed]) -> (int [@untagged])
+  = "caml_int64_clrsb" "caml_int64_clrsb_unboxed" [@@noalloc]
+external count_set_bits : (int64 [@unboxed]) -> (int [@untagged])
+  = "caml_int64_popcount" "caml_int64_popcount_unboxed" [@@noalloc]
+
 external of_int : int -> int64 = "%int64_of_int"
 (** Convert the given integer (type [int]) to a 64-bit integer
     (type [int64]). *)

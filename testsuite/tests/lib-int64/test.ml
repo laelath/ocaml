@@ -59,6 +59,50 @@ let test_min_max () =
   assert (Int64.max 2L 3L = 3L);
   assert (Int64.min 2L 3L = 2L)
 
+let test_clz () =
+  assert (Int64.count_leading_zeros 0L = 64);
+  assert (Int64.count_leading_zeros (-1L) = 0);
+  assert (Int64.count_leading_zeros Int64.min_int = 0);
+  assert (Int64.count_leading_zeros Int64.max_int = 1);
+  assert (Int64.count_leading_zeros (Int64.div Int64.max_int 2L) = 2);
+  assert (Int64.count_leading_zeros (Int64.div Int64.min_int 2L) = 0);
+  assert (Int64.count_leading_zeros 1L = 63);
+  assert (Int64.count_leading_zeros 2L = 62);
+  assert (Int64.count_leading_zeros 3L = 62)
+
+let test_ctz () =
+  assert (Int64.count_trailing_zeros 0L = 64);
+  assert (Int64.count_trailing_zeros (-1L) = 0);
+  assert (Int64.count_trailing_zeros Int64.min_int = 63);
+  assert (Int64.count_trailing_zeros Int64.max_int = 0);
+  assert (Int64.count_trailing_zeros (Int64.div Int64.max_int 2L) = 0);
+  assert (Int64.count_trailing_zeros (Int64.div Int64.min_int 2L) = 62);
+  assert (Int64.count_trailing_zeros 1L = 0);
+  assert (Int64.count_trailing_zeros 2L = 1);
+  assert (Int64.count_trailing_zeros 3L = 0)
+
+let test_clrsb () =
+  assert (Int64.count_leading_redundant_sign_bits 0L = 63);
+  assert (Int64.count_leading_redundant_sign_bits (-1L) = 63);
+  assert (Int64.count_leading_redundant_sign_bits Int64.min_int = 0);
+  assert (Int64.count_leading_redundant_sign_bits Int64.max_int = 0);
+  assert (Int64.count_leading_redundant_sign_bits (Int64.div Int64.max_int 2L) = 1);
+  assert (Int64.count_leading_redundant_sign_bits (Int64.div Int64.min_int 2L) = 1);
+  assert (Int64.count_leading_redundant_sign_bits 1L = 62);
+  assert (Int64.count_leading_redundant_sign_bits 2L = 61);
+  assert (Int64.count_leading_redundant_sign_bits 3L = 61)
+
+let test_popcount () =
+  assert (Int64.count_set_bits 0L = 0);
+  assert (Int64.count_set_bits (-1L) = 64);
+  assert (Int64.count_set_bits Int64.min_int = 1);
+  assert (Int64.count_set_bits Int64.max_int = 63);
+  assert (Int64.count_set_bits (Int64.div Int64.max_int 2L) = 62);
+  assert (Int64.count_set_bits (Int64.div Int64.min_int 2L) = 2);
+  assert (Int64.count_set_bits 1L = 1);
+  assert (Int64.count_set_bits 2L = 1);
+  assert (Int64.count_set_bits 3L = 2)
+
 let tests () =
   test_consts ();
   test_arith ();
@@ -68,6 +112,10 @@ let tests () =
   test_float_conv ();
   test_string_conv ();
   test_min_max ();
+  test_clz ();
+  test_ctz ();
+  test_clrsb ();
+  test_popcount ();
   ()
 
 let () =

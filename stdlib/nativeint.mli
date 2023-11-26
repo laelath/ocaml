@@ -143,6 +143,15 @@ external shift_right_logical :
    regardless of the sign of [x].
    The result is unspecified if [y < 0] or [y >= bitsize]. *)
 
+external count_leading_zeros : (nativeint [@unboxed]) -> (int [@untagged])
+  = "caml_nativeint_clz" "caml_nativeint_clz_unboxed" [@@noalloc]
+external count_trailing_zeros : (nativeint [@unboxed]) -> (int [@untagged])
+  = "caml_nativeint_ctz" "caml_nativeint_ctz_unboxed" [@@noalloc]
+external count_leading_redundant_sign_bits
+  : (nativeint [@unboxed]) -> (int [@untagged])
+  = "caml_nativeint_clrsb" "caml_nativeint_clrsb_unboxed" [@@noalloc]
+external count_set_bits : (nativeint [@unboxed]) -> (int [@untagged])
+  = "caml_nativeint_popcount" "caml_nativeint_popcount_unboxed" [@@noalloc]
 
 external of_int : int -> nativeint = "%nativeint_of_int"
 (** Convert the given integer (type [int]) to a native integer
