@@ -226,7 +226,7 @@ intnat Int32_popcount(int32_t i) {
 intnat Int64_popcount(int64_t i) {
   #ifdef ARCH_SIXTYFOUR
   return __popcnt64(i);
-  #else
+  #else /* ARCH_THIRTYTWO */
   return __popcnt(i) + __popcnt(i >> 32);
   #endif
 }
@@ -254,8 +254,7 @@ intnat caml_int_clz_untagged(value vi)
 
 intnat caml_int_ctz_untagged(value vi)
 {
-  if (vi == 1) { return 8 * sizeof(value) - 1; }
-  return Nativeint_ctz(vi >> 1);
+  return Nativeint_ctz((vi >> 1) | ((intnat)1 << (8 * sizeof(value) - 1)));
 }
 
 intnat caml_int_clrsb_untagged(value vi)
